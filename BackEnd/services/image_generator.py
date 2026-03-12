@@ -3,25 +3,29 @@ import os
 from PIL import Image
 from io import BytesIO
 
-# Hugging api key.
-HF_API_KEY = "*********************************"  
+ACCOUNT_ID = "YOUR_ACC_ID"
+API_TOKEN = "Your_API_KEY"
 
-API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+API_URL = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0"
 
 headers = {
-    "Authorization": f"Bearer {HF_API_KEY}"
+    "Authorization": f"Bearer {API_TOKEN}",
+    "Content-Type": "application/json"
 }
 
 def generate_image(prompt, filename):
 
+    # Clean prompt for better images
+    prompt = prompt.replace("*", "").replace(":", "").strip()
+
     payload = {
-        "inputs": prompt
+        "prompt": f"minimal presentation illustration, infographic style, {prompt}"
     }
 
     response = requests.post(API_URL, headers=headers, json=payload)
 
     if response.status_code != 200:
-        raise Exception("Image generation failed")
+        raise Exception(f"Image generation failed: {response.text}")
 
     image = Image.open(BytesIO(response.content))
 
@@ -30,3 +34,6 @@ def generate_image(prompt, filename):
     image.save(path)
 
     return path
+
+
+#         return None
