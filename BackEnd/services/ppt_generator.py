@@ -1,96 +1,181 @@
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import PP_ALIGN
+from pptx.enum.dml import MSO_THEME_COLOR
+import random
+
 
 def create_ppt(slide_data, filename):
 
-    prs = Presentation()
+    themes = [
+        "templates/Facet.pptx",
+        "templates/gallery.pptx",
+        "templates/ion.pptx",
+        "templates/BoardRoom.pptx",
+        "templates/Circuit.pptx",
+        "templates/Damask.pptx",
+        "templates/Droplet.pptx",
+        "templates/Slate.pptx"
+    ]
 
-    # choose a clean slide layout
-    layout = prs.slide_layouts[5]  # title only layout
+    template = random.choice(themes)
 
-    for slide in slide_data:
+    prs = Presentation(template)
 
-        s = prs.slides.add_slide(layout)
+    # remove template slides
+    while len(prs.slides) > 0:
+        rId = prs.slides._sldIdLst[0].rId
+        prs.part.drop_rel(rId)
+        del prs.slides._sldIdLst[0]
 
-        # TITLE
-        title = s.shapes.title
-        title.text = slide["title"].replace("*","").strip()
 
-        title.text_frame.paragraphs[0].font.size = Pt(40)
+    for i, slide in enumerate(slide_data):
 
-        # LEFT TEXT BOX (points)
-        left = Inches(0.5)
-        top = Inches(2)
-        width = Inches(5)
-        height = Inches(4)
+        title = slide["title"].replace("*", "").strip()
+        points = slide["points"][:4]
+        image = slide.get("image")
 
-        textbox = s.shapes.add_textbox(left, top, width, height)
-        tf = textbox.text_frame
 
-        for i, point in enumerate(slide["points"]):
+        # -------- TITLE SLIDE --------
+        if i == 0:
 
-            if i == 0:
-                p = tf.paragraphs[0]
-            else:
-                p = tf.add_paragraph()
+            layout = prs.slide_layouts[0]
+            s = prs.slides.add_slide(layout)
 
-            p.text = point
-            p.level = 0
-            p.font.size = Pt(24)
+            s.shapes.title.text = title
+            s.placeholders[1].text = "LearnLift - AI"
 
-        # RIGHT IMAGE
-        if "image" in slide:
 
-            img_left = Inches(6)
-            img_top = Inches(2)
+        # -------- PROCESS DIAGRAM (SMARTART STYLE) --------
+        elif len(points) >= 3 and i % 4 == 0:
+
+            layout = prs.slide_layouts[5]
+            s = prs.slides.add_slide(layout)
+
+            s.shapes.title.text = title
+
+            start_left = Inches(0.5)
+            box_width = Inches(3)
+            box_height = Inches(1.8)
+            gap = Inches(0.7)
+            top = Inches(3)
+
+            theme_colors = [
+                MSO_THEME_COLOR.ACCENT_1,
+                MSO_THEME_COLOR.ACCENT_2,
+                MSO_THEME_COLOR.ACCENT_3,
+                MSO_THEME_COLOR.ACCENT_4,
+                MSO_THEME_COLOR.ACCENT_5
+            ]
+
+            boxes = []
+
+            for k, text in enumerate(points[:3]):
+
+                left = start_left + k * (box_width + gap)
+
+                shape = s.shapes.add_shape(
+                    MSO_SHAPE.ROUNDED_RECTANGLE,
+                    left,
+                    top,
+                    box_width,
+                    box_height
+                )
+
+                # theme based color
+                shape.fill.solid()
+                shape.fill.fore_color.theme_color = theme_colors[k % len(theme_colors)]
+
+                shape.line.color.theme_color = MSO_THEME_COLOR.TEXT_1
+
+                tf = shape.text_frame
+                tf.text = text
+
+                tf.paragraphs[0].alignment = PP_ALIGN.CENTER
+                tf.paragraphs[0].font.size = Pt(18)
+
+                boxes.append(shape)
+
+
+            # arrows between boxes
+            for k in range(len(boxes) - 1):
+
+                arrow_left = boxes[k].left + box_width
+                arrow_top = top + Inches(0.6)
+
+                arrow = s.shapes.add_shape(
+                    MSO_SHAPE.RIGHT_ARROW,
+                    arrow_left,
+                    arrow_top,
+                    gap,
+                    Inches(0.6)
+                )
+
+                arrow.fill.solid()
+                arrow.fill.fore_color.theme_color = MSO_THEME_COLOR.ACCENT_2
+
+
+
+        # -------- IMAGE SLIDE --------
+        elif image and i % 3 == 0:
+
+            layout = prs.slide_layouts[5]
+            s = prs.slides.add_slide(layout)
+
+            s.shapes.title.text = title
 
             s.shapes.add_picture(
-                slide["image"],
-                img_left,
-                img_top,
-                width=Inches(3.5)
+                image,
+                Inches(3),
+                Inches(2),
+                width=Inches(5)
             )
+
+
+        # -------- TWO CONTENT SLIDE --------
+        elif i % 2 == 0:
+
+            layout = prs.slide_layouts[3]
+            s = prs.slides.add_slide(layout)
+
+            s.shapes.title.text = title
+
+            left_box = s.shapes.placeholders[1].text_frame
+            right_box = s.shapes.placeholders[2].text_frame
+
+            for j, p in enumerate(points):
+
+                if j < 2:
+                    para = left_box.paragraphs[0] if j == 0 else left_box.add_paragraph()
+                else:
+                    para = right_box.paragraphs[0] if j == 2 else right_box.add_paragraph()
+
+                para.text = p
+                para.font.size = Pt(22)
+
+
+        # -------- NORMAL CONTENT --------
+        else:
+
+            layout = prs.slide_layouts[1]
+            s = prs.slides.add_slide(layout)
+
+            s.shapes.title.text = title
+            tf = s.shapes.placeholders[1].text_frame
+
+            for j, p in enumerate(points):
+
+                para = tf.paragraphs[0] if j == 0 else tf.add_paragraph()
+                para.text = p
+                para.font.size = Pt(24)
+
+
+        # title font
+        s.shapes.title.text_frame.paragraphs[0].font.size = Pt(36)
+
 
     output_path = f"outputs/slides/{filename}.pptx"
     prs.save(output_path)
 
     return output_path
-
-
-
-
-# from pptx import Presentation
-# import os
-
-# def create_ppt(slides, filename):
-
-#     prs = Presentation()
-
-#     for slide in slides:
-
-#         slide_layout = prs.slide_layouts[1]
-#         slide_obj = prs.slides.add_slide(slide_layout)
-
-#         title = slide_obj.shapes.title
-#         content = slide_obj.placeholders[1]
-
-#         title.text = slide["title"].replace("*","").strip()
-#         content.text = "\n".join(slide["points"])
-
-#         # Add image generation if it exists
-#         if "image" in slide:
-
-#             slide_obj.shapes.add_picture(
-#                 slide["image"],
-#                 left=prs.slide_width * 0.55,
-#                 top=prs.slide_height * 0.25,
-#                 width=prs.slide_width * 0.35
-#             )
-
-#     os.makedirs("outputs/slides", exist_ok=True)
-
-#     path = f"outputs/slides/{filename}.pptx"
-
-#     prs.save(path)
-
-#     return path
