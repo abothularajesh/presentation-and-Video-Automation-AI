@@ -34,6 +34,3 @@ def generate_image(prompt, filename):
     image.save(path)
 
     return path
-
-
-#         return None
