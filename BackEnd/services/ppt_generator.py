@@ -53,20 +53,29 @@ def create_ppt(slide_data, filename):
             layout = prs.slide_layouts[0]
             s = prs.slides.add_slide(layout)
 
-            clean_title = slide["title"]
+            raw_title = slide["title"]
 
-            # remove "Here are X slides..." type phrases
-            clean_title = re.sub(r"(?i)here are.*?:", "", clean_title)
+            # case 1: "Here are 5 slides about global warming"
+            match = re.search(r'(?i)about\s+(.*)', raw_title)
 
-            # remove numbering if present
-            #clean_title = re.sub(r'^\d+[\.\)\-\s]*', '', clean_title)
+            if match:
+                clean_title = match.group(1)
+            else:
+                clean_title = raw_title
 
-            # remove words like "explain", "explaining", "about"
-            clean_title = re.sub(r'(?i)\b(explain|explaining|about)\b', '', clean_title)
+            # remove unwanted words if still present
+            clean_title = re.sub(r'(?i)\b(explain|explaining|presentation|slides)\b', '', clean_title)
 
-            clean_title = clean_title.strip().title()
+            # remove numbering like "1. Title"
+            clean_title = re.sub(r'^\d+[\.\)\-\s]*', '', clean_title)
 
-            s.shapes.title.text = clean_title
+            clean_title = clean_title.strip()
+
+            # if everything somehow becomes empty, fall back safely
+            if not clean_title:
+                clean_title = raw_title
+
+            s.shapes.title.text = clean_title.title()
             s.placeholders[1].text = "LearnLift - AI"
 
 
