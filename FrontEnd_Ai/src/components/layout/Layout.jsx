@@ -6,8 +6,7 @@ function Layout({ children }) {
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(135deg,#020617,#0f172a,#020617)",
-        color: "white"
+        transition: "0.3s"
       }}
     >
       {children}
