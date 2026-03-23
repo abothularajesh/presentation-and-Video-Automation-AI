@@ -3,50 +3,44 @@ import React from "react";
 function DownloadSection({ data }) {
 
   const downloadPPT = () => {
-    window.open("http://localhost:8000" + data.ppt);
+    if (!data || !data.ppt) return;
+    window.open(`http://localhost:8000${data.ppt}`, "_blank");
   };
 
   const downloadVideo = () => {
-    if(data.video){
-      window.open("http://localhost:8000" + data.video);
-    }
+    if (!data || !data.video) return;
+    window.open(`http://localhost:8000${data.video}`, "_blank");
   };
 
-  return(
+  return (
 
-    <div style={{
-      marginTop:"40px",
-      display:"flex",
-      gap:"20px",
-      justifyContent:"center"
-    }}>
+    <div
+      style={{
+        marginTop: "50px",
+        display: "flex",
+        gap: "25px",
+        justifyContent: "center"
+      }}
+    >
+
+      {/* PPT BUTTON */}
 
       <button
         onClick={downloadPPT}
-        style={{
-          padding:"12px 20px",
-          borderRadius:"10px",
-          border:"none",
-          background:"#22c55e",
-          color:"white",
-          cursor:"pointer"
-        }}
+        disabled={!data?.ppt}
+        className="download-btn ppt-btn"
       >
-        Download PPT
+        ⬇ Download PPT
       </button>
+
+      {/* VIDEO BUTTON */}
 
       <button
         onClick={downloadVideo}
-        style={{
-          padding:"12px 20px",
-          borderRadius:"10px",
-          border:"none",
-          background:"#6366f1",
-          color:"white",
-          cursor:"pointer"
-        }}
+        disabled={!data?.video}
+        className="download-btn video-btn"
       >
-        Download Video
+        ⬇ Download Video
       </button>
 
     </div>
