@@ -1,6 +1,89 @@
 body{
   margin:0;
   font-family:Arial, Helvetica, sans-serif;
+  transition:0.3s;
+}
+
+/* LIGHT MODE (default) */
+body{
+  background:linear-gradient(135deg,#ffffff,#f1f5f9,#ffffff);
+  color:#020617;
+}
+
+/* DARK MODE */
+body.dark-mode{
   background:linear-gradient(135deg,#020617,#0f172a,#020617);
   color:white;
+}
+
+/* NAVBAR - LIGHT MODE */
+.navbar {
+  background: linear-gradient(90deg,#ffffff,#f1f5f9);
+  color:#020617;
+}
+
+/* NAVBAR - DARK MODE */
+body.dark-mode .navbar {
+  background: linear-gradient(90deg,#0f172a,#020617);
+  color:white;
+}
+
+/* NAVBAR BUTTON */
+.theme-btn {
+  background:#e2e8f0;
+  color:#020617;
+  border:none;
+  padding:9px 16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+body.dark-mode .theme-btn {
+  background:#1e293b;
+  color:white;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: none;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+/* Hover animation */
+.download-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.45);
+}
+
+/* Click animation */
+.download-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+}
+
+/* PPT button */
+.ppt-btn {
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+/* Video button */
+.video-btn {
+  background: linear-gradient(135deg,#7c3aed,#a855f7);
+}
+
+@keyframes loadingMove {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(260px);
+  }
 }
