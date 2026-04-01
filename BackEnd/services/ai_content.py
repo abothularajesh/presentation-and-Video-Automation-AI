@@ -1,5 +1,5 @@
 from groq import Groq
-client = Groq(api_key="********************************")
+client = Groq(api_key="YOUR_API_KEY")
 
 def generate_slide_content(topic, slide_count):
 
