@@ -163,19 +163,25 @@ def generate(topic: str, slides: int):
 
     for i, slide in enumerate(slide_data):
 
-        try:
-            print("Generating image for:", slide["title"])
+        # -------- GENERATE IMAGE ONLY FOR FEW SLIDES --------
+        if i % 3 == 0 and i != 0:   # every 3rd slide except title slide
+            try:
+                print("Generating image for:", slide["title"])
 
-            img_path = generate_image(
-                slide["title"],
-                f"{topic.replace(' ','_')}_slide_{i}"
-            )
+                img_path = generate_image(
+                    slide["title"],
+                    f"{topic.replace(' ','_')}_slide_{i}"
+                )
 
-            image_paths.append(img_path)
-            slide["image"] = img_path
+                image_paths.append(img_path)
+                slide["image"] = img_path
 
-        except Exception as e:
-            print("IMAGE ERROR:", e)
+            except Exception as e:
+                print("IMAGE ERROR:", e)
+                slide["image"] = None
+
+        else:
+            slide["image"] = None
 
     # ---------- CREATE PPT ----------
     try:
