@@ -147,34 +147,39 @@ def create_ppt(slide_data, filename):
 
             s.shapes.title.text = title
 
-            # -------- LEFT TEXT BOX --------
+            # move everything a little down for proper spacing
+            top_position = Inches(2.3)
+
+            # -------- LEFT TEXT BOX (WITH BULLET POINTS) --------
             textbox = s.shapes.add_textbox(
-                Inches(0.7),     # left margin
-                Inches(2),       # top
-                Inches(5),       # width
-                Inches(3.8)      # height
+                Inches(0.7),        # left margin
+                top_position,        # lowered position
+                Inches(5),           # width
+                Inches(3.8)          # height
             )
 
             tf = textbox.text_frame
             tf.word_wrap = True
             tf.clear()
 
-            for j, p in enumerate(points[:4]):
+            for j, p in enumerate(points[:5]):   # show 5 bullet points
 
                 para = tf.paragraphs[0] if j == 0 else tf.add_paragraph()
-                para.text = p
 
-                para.level = 0           # this enables bullet automatically
+                para.text = p.strip()
                 para.font.size = Pt(24)
-                para.space_after = Pt(10)
+                para.space_after = Pt(12)
                 para.font.bold = False
 
+                # force bullet point
+                para.level = 0
+                para.font.name = "Calibri"
 
             # -------- RIGHT IMAGE --------
             s.shapes.add_picture(
                 image,
-                Inches(6.3),     # right side
-                Inches(2),       # aligned with text
+                Inches(6.3),        # right side
+                top_position,        # same vertical alignment as text box
                 height=Inches(3.8)
             )
 
