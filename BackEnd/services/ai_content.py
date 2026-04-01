@@ -4,17 +4,27 @@ client = Groq(api_key="********************************")
 def generate_slide_content(topic, slide_count):
 
     prompt = f"""
-    Create {slide_count} presentation slides about {topic}.
-    Each slide must contain:
-    Title
-    3 bullet points
+Create exactly {slide_count} presentation slides about {topic}.
 
-    Format:
-    Slide Title:
-    - point
-    - point
-    - point
-    """
+Follow the 5x5 presentation rule strictly:
+Each slide must contain:
+- 1 short title
+- Exactly 5 bullet points
+- Each bullet point must contain exactly 5 words
+- Do not write long sentences
+- Do not add explanations
+- Do not add numbering
+- Do not add extra text
+
+Format strictly like this:
+
+Slide Title:
+- word word word word word
+- word word word word word
+- word word word word word
+- word word word word word
+- word word word word word
+"""
 
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
