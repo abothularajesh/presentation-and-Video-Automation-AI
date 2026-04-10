@@ -1,88 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-function Navbar() {
-
-  const [darkMode, setDarkMode] = useState(true);
-
+function Navbar({ theme, setTheme }) {
   const logout = () => {
     localStorage.removeItem("token");
     window.location.reload();
   };
 
-  const toggleTheme = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-
-    if (newMode) {
-      document.body.classList.add("dark-mode");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.body.classList.remove("dark-mode");
-      localStorage.setItem("theme", "light");
-    }
-  };
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "light") {
-      setDarkMode(false);
-      document.body.classList.remove("dark-mode");
-    } else {
-      document.body.classList.add("dark-mode");
-    }
-  }, []);
-
   return (
-    <div className="navbar"
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "18px 50px"
-      }}
-    >
-      {/* Left logo */}
-      <h2 style={{ color: "#8b5cf6", letterSpacing: "1px" }}>
-        LearnLift AI
+    <div className="navbar">
+      <h2 className="logo">
+        <span className="logo-icon">📊</span> LearnLift AI
       </h2>
-
-      {/* Center menu */}
-      <div style={{ display: "flex", gap: "40px", fontSize: "15px" }}>
-        <span style={{ cursor: "pointer" }}>AI Video Tutor</span>
-        <span style={{ cursor: "pointer" }}>Presentation Maker</span>
+      <div className="nav-menu">
+        <span>AI Video Tutor</span>
+        <span>Presentation Maker</span>
       </div>
 
-      {/* Right buttons */}
-      <div style={{ display: "flex", gap: "15px" }}>
-
+      <div className="nav-actions">
         <button
-          onClick={toggleTheme}
-          style={{
-            background: "#26384f",
-            color: "white",
-            border: "none",
-            padding: "9px 16px",
-            borderRadius: "10px",
-            cursor: "pointer",
-            fontSize: "14px"
+          className="light-btn"
+          onClick={() => {
+            const newTheme = theme === "dark" ? "light" : "dark";
+            setTheme(newTheme);
+            localStorage.setItem("theme", newTheme);
           }}
         >
-          {darkMode ? "☀ Light" : "🌙 Dark"}
+          {theme === "dark" ? "🌙 Dark" : "☀ Light"}
         </button>
-
-        <button
-          onClick={logout}
-          style={{
-            background: "#ae3131",
-            border: "none",
-            padding: "9px 16px",
-            borderRadius: "10px",
-            color: "white",
-            cursor: "pointer",
-            fontSize: "14px"
-          }}
-        >
+        <button onClick={logout} className="logout-btn">
           Logout
         </button>
       </div>
